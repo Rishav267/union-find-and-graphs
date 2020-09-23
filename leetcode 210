@@ -1,0 +1,88 @@
+class Solution:
+    def findOrder(self, numCourses: int, prerequisites: List[List[int]]) -> List[int]:
+        '''
+        dic = {}
+        markedcourses = [False]*numCourses
+        currcourses = [0]*numCourses
+        
+        for i in range(numCourses):
+            dic[i] = []
+        for i in prerequisites:
+            dic[i[1]].append(i[0])
+        #print(dic)
+        
+        output = []
+        #j=0
+        def isCyclic(dic,markedcoureses,currcourses,vertex,output):
+            markedcourses[vertex] = True
+            currcourses[vertex] = 1
+            
+            for adj in dic[vertex]:
+                if currcourses[adj] == 1:
+                    return True
+                elif markedcourses[adj] == False:
+                    if isCyclic(dic,markedcourses,currcourses,adj,output) == True:
+                        return True
+           
+            currcourses[vertex] = 0
+            output.append(vertex) #error
+            
+            return False
+        
+        for i in range(numCourses): #driver code
+            if markedcourses[i] == False:
+                if isCyclic(dic,markedcourses,currcourses,i,output):
+                    return []
+            
+        output = output[ : :-1] #reversing the output array, because stack mai opposite store hota hai
+        return output
+        '''
+        countOfVisitedNodes = numCourses #track how many nodes visited
+        inDegree = [0]*numCourses #array to store indegree of all nodes
+        
+        graph = {}
+    
+        #initializing graph with adjacent list
+        
+        for i in range(numCourses):
+            graph[i] = []
+        for i in prerequisites:
+            graph[i[1]].append(i[0])
+            inDegree[i[0]] +=1 #calculating indegree
+            
+        #print(graph)
+        #print(inDegree)
+        #length = len(prerequisites)
+        length = len(graph)
+        #print(length)
+        
+        '''
+        #another way to calculate indegree
+        for i in range(length):
+            for j in range(len(graph[i])):
+                inDegree[graph[i][j]] = inDegree[graph[i][j]]+1
+        print(inDegree)
+            '''
+        
+        queue = []
+        output = []
+        
+        #adding nodes to queue having indegree 0
+        for i in range(numCourses):
+            if inDegree[i]==0:
+                queue.append(i)
+        
+        while queue:
+                temp = queue.pop()
+                output.append(temp)
+                countOfVisitedNodes-=1
+                for i in graph[temp]:
+                    inDegree[i] -=1
+                    if(inDegree[i]==0):
+                        queue.append(i)
+                        
+        if countOfVisitedNodes==0:
+            return output
+        else:
+            return[]
+                
